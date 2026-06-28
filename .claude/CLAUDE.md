@@ -2,7 +2,9 @@
 
 ## Project - What We Are Building
 
-**docuFetch** is a personal RAG application, it ingests folders, creates embeddings of the files inside the folder and stores them in a local vector store (ChromaDB). A simple web chat UI lets the user ask questions; the system retrieves the top-3 relevant chunks, generates a 2–4 sentence answer via Claude, and cites the source filename. If no relevant document is found, it says so explicitly.
+**docuFetch** is a personal RAG application, it ingests folders, creates embeddings of the files inside the folder and stores them in a local vector store (ChromaDB). A simple web chat UI lets the user ask questions; the system retrieves the top-3 relevant chunks, generates a 2–4 sentence answer via OpenRouter API, and cites the source filename. If no relevant document is found, it says so explicitly.
+
+**NOTE** : We first create the backend, test it out, then we go on to create the frontend
 
 ## Tech Stack
 
@@ -22,10 +24,12 @@ docuFetch/
 ├── frontend/   # React + Tailwind web chat UI
 ├── requirements.txt
 ├── docs/
+    ├── grill_doc_roadmap.md    <- Summary of the plan Q and A.
     ├── prd.md                  <- Product requirements document
     ├── plan.md                 <- written by the planner agent
     ├── issues.md               <- PRD converted to issues, plan.md is the file from which issues are created
     ├── issues_completion.md    <- Issue completion tracker
+    ├── context.md              <- Memory context for the agents, stores all the important decisions.
 ├── README.md
 ```
 
