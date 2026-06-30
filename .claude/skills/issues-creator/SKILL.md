@@ -1,84 +1,99 @@
 ---
 name: issues-creator
-description: Break a plan, spec, or PRD into independently-grabbable issues on the project issue tracker using tracer-bullet vertical slices.
-disable-model-invocation: true
+description: Break a PRD and features.md into independently-grabbable issues saved to issues.md, using tracer-bullet vertical slices. Use when the user wants to turn features into work items, says things like "create issues", "break this into tasks", "what should I work on next", or "make issues from the features". Always reads prd.md and features.md before producing output.
+user-invocable: true
+allowed-tools: Read, Write, Glob
 ---
 
-# To Issues
+## Important Folder Structure
 
-Break a plan into independently-grabbable issues using vertical slices (tracer bullets).
+- If you are prompted to build for the backend, your docs folder path is [docs/backend](../../../docs/backend/)
+- If you are prompted to build for the backend, your docs folder path is [docs/frontend](../../../docs/frontend/)
 
-The issue tracker and triage label vocabulary should have been provided to you — run `/setup-matt-pocock-skills` if not.
+Break `features.md` (and `prd.md` for context) into independently-grabbable issues using vertical slices — tracer bullets that cut through all layers end-to-end. Output goes to `issues.md`.
+
+## Inputs
+
+The user may pass paths explicitly, or reference them in conversation. If not specified, search `docs/backend` or `docs/frontend` for:
+- `features.md` — primary source (the features to slice into issues)
+- `prd.md` — context (user stories, scope, implementation decisions)
 
 ## Process
 
-### 1. Gather context
+### 1. Read both docs
 
-Work from whatever is already in the conversation context. If the user passes an issue reference (issue number, URL, or path) as an argument, fetch it from the issue tracker and read its full body and comments.
+Read `features.md` fully — this is your work list. Read `prd.md` for context: user stories, module boundaries, acceptance criteria intent, and anything marked out of scope.
 
-### 2. Explore the codebase (optional)
+### 2. Draft vertical slices
 
-If you have not already explored the codebase, do so to understand the current state of the code. Issue titles and descriptions should use the project's domain glossary vocabulary, and respect ADRs in the area you're touching.
+Break features into **tracer bullet** issues. Each issue is a thin vertical slice — it cuts through ALL relevant layers end-to-end, not a single layer in isolation.
 
-Look for opportunities to prefactor the code to make the implementation easier. "Make the change easy, then make the easy change."
+**Vertical slice rules:**
+- Each slice delivers a narrow but complete path through every layer it touches (e.g. ingestion → storage → retrieval → response)
+- A completed slice is independently demoable or verifiable
+- Slices should be small enough to finish in one focused session
+- Any prefactoring that unblocks multiple slices should be its own issue and listed as a blocker
 
-### 3. Draft vertical slices
+**Not this (horizontal):** "Add all ChromaDB schema migrations"  
+**This (vertical):** "Ingest a single PDF and retrieve a matching chunk via the CLI"
 
-Break the plan into **tracer bullet** issues. Each issue is a thin vertical slice that cuts through ALL integration layers end-to-end, NOT a horizontal slice of one layer.
+### 3. Review the breakdown with the user
 
-<vertical-slice-rules>
+Present proposed issues as a numbered list. For each, show:
+- **Title** — short, descriptive
+- **Blocked by** — which other issues (by number) must complete first
+- **Features covered** — which features from features.md this addresses
 
-- Each slice delivers a narrow but COMPLETE path through every layer (schema, API, UI, tests)
-- A completed slice is demoable or verifiable on its own
-- Any prefactoring should be done first
+Ask:
+- Does the granularity feel right?
+- Are the dependencies correct?
+- Should any issues be merged or split?
 
-</vertical-slice-rules>
+Iterate until the user approves.
 
-### 4. Quiz the user
+### 4. Write issues.md
 
-Present the proposed breakdown as a numbered list. For each slice, show:
+Save all approved issues to the same directory as `features.md` (default: `docs/backend/issues.md` or `docs/frontend/issues.md`).
 
-- **Title**: short descriptive name
-- **Blocked by**: which other slices (if any) must complete first
-- **User stories covered**: which user stories this addresses (if the source material has them)
+Use this template for every issue:
 
-Ask the user:
+```
+## Issue [N]: [Title]
 
-- Does the granularity feel right? (too coarse / too fine)
-- Are the dependency relationships correct?
-- Should any slices be merged or split further?
+**What to build:**
+[Concise description of this vertical slice — end-to-end behavior, not layer-by-layer steps. No file paths or code snippets unless a snippet encodes a decision more precisely than prose can.]
 
-Iterate until the user approves the breakdown.
+**Acceptance criteria:**
+- [ ] Criterion (observable, verifiable by running the code)
+- [ ] Criterion
+- [ ] Criterion
 
-### 5. Publish the issues to the issue tracker
+**Blocked by:** Issue [N], Issue [N] / None — can start immediately
+```
 
-For each approved slice, publish a new issue to the issue tracker. Use the issue body template below. These issues are considered ready for AFK agents, so publish them with the correct triage label unless instructed otherwise.
+Issues are written in dependency order — blockers first — so the file reads as a natural build sequence.
 
-Publish issues in dependency order (blockers first) so you can reference real issue identifiers in the "Blocked by" field.
+## Output format
 
-<issue-template>
-## Parent
+```markdown
+# Issues
 
-A reference to the parent issue on the issue tracker (if the source was an existing issue, otherwise omit this section).
+_Generated from: [path to features.md]_
 
-## What to build
+---
 
-A concise description of this vertical slice. Describe the end-to-end behavior, not layer-by-layer implementation.
+## Issue 1: [Title]
 
-Avoid specific file paths or code snippets — they go stale fast. Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it here and note briefly that it came from a prototype. Trim to the decision-rich parts — not a working demo, just the important bits.
+**What to build:**
+...
 
-## Acceptance criteria
+**Acceptance criteria:**
+- [ ] ...
 
-- [ ] Criterion 1
-- [ ] Criterion 2
-- [ ] Criterion 3
+**Blocked by:** None — can start immediately
 
-## Blocked by
+---
 
-- A reference to the blocking ticket (if any)
-
-Or "None - can start immediately" if no blockers.
-
-</issue-template>
-
-Do NOT close or modify any parent issue.
+## Issue 2: [Title]
+...
+```

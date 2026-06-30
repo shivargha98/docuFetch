@@ -24,12 +24,17 @@ docuFetch/
 ├── frontend/   # React + Tailwind web chat UI
 ├── requirements.txt
 ├── docs/
-    ├── grill_doc_roadmap.md    <- Summary of the plan Q and A.
-    ├── prd.md                  <- Product requirements document
-    ├── plan.md                 <- written by the planner agent
-    ├── issues.md               <- PRD converted to issues, plan.md is the file from which issues are created
-    ├── issues_completion.md    <- Issue completion tracker
-    ├── context.md              <- Memory context for the agents, stores all the important decisions.
+    ├── backend/
+        ├── grill_doc_roadmap.md    <- Summary of the plan Q and A.
+        ├── prd.md                  <- Product requirements document
+        ├── features.md             <- PRD converted to full list of features
+        ├── issues.md               <- features converted to issues
+        ├── tasks.md                 <- written by the planner agent, plans on how we build the entire product, takes context from issues
+        ├── issues_completion.md    <- Issue completion tracker
+        ├── tests.md                <- Entire test plan for the backend
+        ├── tests/                  <- Entire test suite for the backend
+        ├── context.md              <- Memory context for the agents, stores all the important decisions.
+    ├── frontend/
 ├── README.md
 ```
 

@@ -1,12 +1,16 @@
 ---
 name: prd-generator
-description: Turn the current conversation into a PRD and publish it to the project issue tracker — no interview, just synthesis of what you've already discussed.
-disable-model-invocation: true
+description: Turn a user interview doc or a roadmap document into a PRD and create a prd.md document in a designated folder as specified by the user — no interview, just synthesis of what you've already discussed.
+user-invocable: true
+allowed-tools: Read, Write, Edit, Glob, Grep, WebSearch, Bash(git *), Bash(mv *)
 ---
 
-This skill takes the current conversation context and codebase understanding and produces a PRD. Do NOT interview the user — just synthesize what you already know.
+This skill takes in the a user interview doc or a roadmap document and codebase understanding and produces a PRD. Do NOT interview the user — just synthesize what you already know.
 
-The issue tracker and triage label vocabulary should have been provided to you — run `/setup-matt-pocock-skills` if not.
+## Important Folder Structure
+
+- If you are prompted to build for the backend, your docs folder path is [docs/backend](../../../docs/backend/)
+- If you are prompted to build for the backend, your docs folder path is [docs/frontend](../../../docs/frontend/)
 
 ## Process
 
@@ -16,7 +20,7 @@ The issue tracker and triage label vocabulary should have been provided to you �
 
 Check with the user that these seams match their expectations.
 
-3. Write the PRD using the template below, then publish it to the project issue tracker. Apply the `ready-for-agent` triage label - no need for additional triage.
+3. Write the PRD using the template below, then create a prd.md and save it to where the user wants to
 
 <prd-template>
 
@@ -73,3 +77,10 @@ A description of the things that are out of scope for this PRD.
 Any further notes about the feature.
 
 </prd-template>
+
+
+### 6. Save
+
+Save to the same directory as the PRD (`docs/backend/features.md` or `docs/frontend/features.md`), unless the user says otherwise.
+
+After saving, tell the user: how many features were created, which modules they cover, and flag any user stories that had no clear feature match (if any).Save this information in `context.md` file either in the backend or the frontend folder depending on which part the feature is being created for.
