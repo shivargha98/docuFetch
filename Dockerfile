@@ -16,9 +16,13 @@ RUN apt-get update && apt-get install -y \
 RUN npm install -g @anthropic-ai/claude-code
 
 # --dangerously-skip-permissions refuses to run as root, so use a non-root user
+# Give claude a writable npm prefix so auto-updates don't fail with permission errors
 RUN useradd --create-home --shell /bin/bash claude \
-    && mkdir -p /home/claude/.claude \
-    && chown -R claude:claude /home/claude/.claude
+    && mkdir -p /home/claude/.claude /home/claude/.npm-global/bin \
+    && echo "prefix=/home/claude/.npm-global" > /home/claude/.npmrc \
+    && chown -R claude:claude /home/claude/.claude /home/claude/.npm-global /home/claude/.npmrc
+
+ENV PATH="/home/claude/.npm-global/bin:$PATH"
 
 # Installs the official marketplace + a fixed plugin set before each session
 COPY --chown=claude:claude entrypoint.sh /usr/local/bin/entrypoint.sh

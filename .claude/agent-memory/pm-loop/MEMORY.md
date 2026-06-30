@@ -1,0 +1,1 @@
+- [docuFetch Backend PM Loop](project_docufetch_backend.md) — module groupings, issue slicing pattern, test strategy, file naming conventions for backend artifacts
