@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 chroma_db/
 hash_store.json
-
+project-structure.html
 # C extensions
 *.so
 
