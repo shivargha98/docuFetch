@@ -1,2 +1,16 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+pdfplumber
+pillow
 langchain
+langchain-anthropic
+langchain-community
 langgraph
+chromadb
+rank-bm25
+httpx
+fpdf2
+pytest
+pytest-asyncio
+openai

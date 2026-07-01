@@ -29,11 +29,15 @@ docuFetch/
         ├── prd.md                  <- Product requirements document
         ├── features.md             <- PRD converted to full list of features
         ├── issues.md               <- features converted to issues
-        ├── tasks.md                 <- written by the planner agent, plans on how we build the entire product, takes context from issues
-        ├── issues_completion.md    <- Issue completion tracker
+        ├── tasks.md                 <- written by the agent, tracker for what tasks lie ahead
         ├── tests.md                <- Entire test plan for the backend
         ├── tests/                  <- Entire test suite for the backend
         ├── context.md              <- Memory context for the agents, stores all the important decisions.
+        ├── backend_context.md      <-  Memory context for the agents, for backend work
+        ├── backend_TASKS.md        <- written by the backend orchestrator agent, on to track the feature/issue builds
+        ├── orchestrator_plan       <- written by the orchestrator planner on how we build the backend
+        ├── agent-briefs/           <- agent briefs for the worker agents
+        ├── agent-reports/          <- agent reports from the worker agents
     ├── frontend/
 ├── README.md
 ```
@@ -97,7 +101,9 @@ ruff format .
 Start the backend + frontend with:
 
 ```bash
-uvicorn server:app --port 8000 --reload
+uvicorn server:app --port 8000 --reload --reload-exclude "chroma_db/*" --reload-exclude "hash_store.json"
 ```
+
+**Important:** the ingestion scheduler writes to `chroma_db/` and `hash_store.json` on every run. Without the `--reload-exclude` flags above, `--reload` treats those writes as code changes and respawns the worker process — old workers can linger and hold concurrent connections to the same ChromaDB SQLite file, corrupting it (HNSW index files and the SQLite metadata table go out of sync, leading to `doc_count: 0` / "no relevant information" answers despite ingested data). If this happens again: kill all stray python processes for this project, delete `chroma_db/` and `hash_store.json`, and restart with the command above.
 
 **Update this file as and when the structure gets modified.**

@@ -87,6 +87,17 @@
 - Image path storage assumes watched folder path is stable (files won't move)
 - In-memory session history is lost on server restart (acceptable for personal use)
 
+## Build Decisions (Orchestrator Round)
+
+### Fixes surfaced by integration worker (Round 6)
+- `claude-3-5-haiku-20241022` is end-of-life. Updated to `claude-haiku-4-5` in `backend/api/server.py`. This must be kept current with Anthropic model lifecycle.
+- `embed_image()` input format: OpenRouter's VL endpoint requires a plain base64 data URI string, not an `{"type":"image_url","image_url":{"url":...}}` dict. Worker corrected this.
+- TestClient lifespan: all API tests must use `with TestClient(app) as client:` — not doing so silently skips lifespan startup, causing AttributeError on `app.state.*`.
+- conftest skip markers: integration/API tests skip (not fail) when API keys are not present. Pattern: `skip_if_no_openrouter` / `skip_if_no_anthropic` defined in conftest.py.
+
+### Final test result
+56 passed, 0 failed, 0 skipped — 2026-06-30
+
 ## Loop Completion Summary
 **Status:** Complete
 **Total features:** 17 (across 6 modules: Ingestion, Embeddings, Retrieval, Graph, API, CLI)
