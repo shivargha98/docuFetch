@@ -1,19 +1,27 @@
-// Renders an animated typing indicator in the style of an assistant message bubble.
-// Shows three staggered bouncing dots to signal the assistant is generating a response.
+// Typing indicator — three dots with staggered bounce animation, styled to match
+// the assistant bubble so it reads as a placeholder response in progress.
 
 /**
- * Displays three animated dots with staggered bounce delays,
- * styled as an assistant-side bubble. Used to indicate the assistant is typing.
+ * Shows three animated dots in an assistant-styled bubble. Used while the backend
+ * is generating a response.
  */
 export default function TypingIndicator() {
   return (
-    <div data-testid="typing-indicator" className="flex mb-3 justify-start">
-      <div className="bg-gray-100 px-4 py-3 rounded-lg">
-        <div className="flex gap-1">
-          <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0ms]" />
-          <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:150ms]" />
-          <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:300ms]" />
-        </div>
+    <div className="flex justify-start mb-4" data-testid="typing-indicator">
+      <div
+        className="px-4 py-3 rounded-2xl rounded-tl-sm flex items-center gap-1.5"
+        style={{ background: 'var(--asst-bg)' }}
+      >
+        {[0, 150, 300].map((delay) => (
+          <span
+            key={delay}
+            className="block w-2 h-2 rounded-full"
+            style={{
+              background: 'var(--text-muted)',
+              animation: `dotBounce 1.2s ease-in-out ${delay}ms infinite`,
+            }}
+          />
+        ))}
       </div>
     </div>
   )

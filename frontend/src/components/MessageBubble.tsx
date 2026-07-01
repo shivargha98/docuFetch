@@ -1,45 +1,93 @@
-// Renders a single chat message bubble. Handles user, assistant, and error roles
-// with distinct styling. Assistant messages have citations stripped from display
-// text and optionally show a sources block below the answer.
+// Renders a single chat message. User messages appear as right-aligned accent-colored
+// pills. Assistant messages appear left-aligned with a subtle source-file citation block
+// in monospace below the answer. Error messages appear left-aligned in muted red.
 
 import { stripCitations } from '../utils/sources'
 import type { Message } from '../types/message'
 
 interface MessageBubbleProps {
-  message: Message;
+  message: Message
 }
 
 /**
- * Renders a single message bubble with role-appropriate styling.
- * User messages are right-aligned blue bubbles.
- * Assistant messages are left-aligned gray bubbles with optional sources block.
- * Error messages are left-aligned red/orange bubbles with no sources block.
+ * Role-differentiated bubble component.
+ * - user: right-aligned, accent background
+ * - assistant: left-aligned, surface-2 background, with optional sources chips
+ * - error: left-aligned, error styling
  */
 export default function MessageBubble({ message }: MessageBubbleProps) {
-  const isUser = message.role === 'user'
-  const isAssistant = message.role === 'assistant'
+  const { role, text, sources } = message
+  const isUser = role === 'user'
+  const isAssistant = role === 'assistant'
 
-  const containerClass = `flex mb-3 ${isUser ? 'justify-end' : 'justify-start'}`
+  const displayText = isAssistant ? stripCitations(text) : text
+  const hasSources = isAssistant && sources && sources.length > 0
 
-  const bubbleClass = isUser
-    ? 'bg-blue-600 text-white px-4 py-2 rounded-lg max-w-[70%] whitespace-pre-wrap'
-    : isAssistant
-      ? 'bg-gray-100 text-gray-800 px-4 py-2 rounded-lg max-w-[70%] whitespace-pre-wrap'
-      : 'bg-red-50 text-red-700 border border-red-200 px-4 py-2 rounded-lg max-w-[70%] whitespace-pre-wrap'
+  if (isUser) {
+    return (
+      <div className="flex justify-end mb-2">
+        <div
+          className="px-4 py-2.5 rounded-2xl rounded-tr-sm text-sm leading-relaxed max-w-[75%] whitespace-pre-wrap"
+          style={{
+            background: 'var(--user-bg)',
+            color: 'var(--user-text)',
+          }}
+          data-role="user"
+        >
+          {displayText}
+        </div>
+      </div>
+    )
+  }
 
-  const displayText = isAssistant ? stripCitations(message.text) : message.text
-  const hasSources = isAssistant && message.sources && message.sources.length > 0
-
-  return (
-    <div className={containerClass}>
-      <div data-role={message.role} className={bubbleClass}>
-        {displayText}
-        {hasSources && (
-          <div className="mt-2 text-xs text-gray-500">
-            <span className="font-semibold">Sources: </span>
-            {message.sources!.join(', ')}
+  if (isAssistant) {
+    return (
+      <div className="flex justify-start mb-4">
+        <div className="flex flex-col gap-2 max-w-[80%]">
+          <div
+            className="px-4 py-3 rounded-2xl rounded-tl-sm text-sm leading-relaxed whitespace-pre-wrap"
+            style={{
+              background: 'var(--asst-bg)',
+              color: 'var(--asst-text)',
+            }}
+            data-role="assistant"
+          >
+            {displayText}
           </div>
-        )}
+          {hasSources && (
+            <div className="flex flex-wrap gap-1.5 pl-1">
+              {sources!.map((src) => (
+                <span
+                  key={src}
+                  className="font-mono text-xs px-2 py-0.5 rounded-full"
+                  style={{
+                    background: 'var(--accent-light)',
+                    color: 'var(--accent)',
+                  }}
+                >
+                  {src}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // error role
+  return (
+    <div className="flex justify-start mb-2">
+      <div
+        className="px-4 py-2.5 rounded-2xl text-sm leading-relaxed max-w-[80%] whitespace-pre-wrap"
+        style={{
+          background: 'var(--err-bg)',
+          color: 'var(--err-text)',
+          border: '1px solid var(--err-border)',
+        }}
+        data-role="error"
+      >
+        {displayText}
       </div>
     </div>
   )
