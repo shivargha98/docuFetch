@@ -29,7 +29,7 @@ docuFetch/
         ├── prd.md                  <- Product requirements document
         ├── features.md             <- PRD converted to full list of features
         ├── issues.md               <- features converted to issues
-        ├── tasks.md                 <- written by the agent, tracker for what tasks lie ahead
+        ├── tasks.md                <- written by the agent, tracker for what tasks lie ahead
         ├── tests.md                <- Entire test plan for the backend
         ├── tests/                  <- Entire test suite for the backend
         ├── context.md              <- Memory context for the agents, stores all the important decisions.
@@ -39,6 +39,19 @@ docuFetch/
         ├── agent-briefs/           <- agent briefs for the worker agents
         ├── agent-reports/          <- agent reports from the worker agents
     ├── frontend/
+        ├── grill_doc_roadmap.md    <- Summary of the plan Q and A.
+        ├── prd.md                  <- Product requirements document
+        ├── features.md             <- PRD converted to full list of features
+        ├── issues.md               <- features converted to issues
+        ├── tasks.md                <- written by the agent, tracker for what tasks lie ahead
+        ├── tests.md                <- Entire test plan for the backend
+        ├── tests/                  <- Entire test suite for the backend
+        ├── context.md              <- Memory context for the agents, stores all the important decisions.
+        ├── backend_context.md      <-  Memory context for the agents, for backend work
+        ├── backend_TASKS.md        <- written by the backend orchestrator agent, on to track the feature/issue builds
+        ├── orchestrator_plan       <- written by the orchestrator planner on how we build the backend
+        ├── agent-briefs/           <- agent briefs for the worker agents
+        ├── agent-reports/          <- agent reports from the worker agents
 ├── README.md
 ```
 

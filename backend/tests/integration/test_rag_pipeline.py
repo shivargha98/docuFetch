@@ -23,7 +23,7 @@ def _make_mock_retriever(docs):
 def test_relevant_query_returns_answer_with_source_citation():
     """Graph with a relevant query routes through generate and cites sources."""
     from langchain_anthropic import ChatAnthropic
-    llm = ChatAnthropic(model="claude-haiku-4-5", api_key=os.getenv("ANTHROPIC_API_KEY"))
+    llm = ChatAnthropic(model=os.getenv("ANTHROPIC_MODEL", "claude-haiku-4-5"), api_key=os.getenv("ANTHROPIC_API_KEY"))
     chunks = [Document(page_content="The refund policy allows returns within 30 days.", metadata={"filename": "policy.txt", "file_type": "txt"})]
     retriever = _make_mock_retriever(chunks)
     graph = build_graph(retriever, llm)
@@ -47,7 +47,7 @@ def test_irrelevant_query_returns_no_results_message():
 def test_second_turn_is_contextually_aware_of_first():
     """Two-turn conversation: second answer is aware of first."""
     from langchain_anthropic import ChatAnthropic
-    llm = ChatAnthropic(model="claude-haiku-4-5", api_key=os.getenv("ANTHROPIC_API_KEY"))
+    llm = ChatAnthropic(model=os.getenv("ANTHROPIC_MODEL", "claude-haiku-4-5"), api_key=os.getenv("ANTHROPIC_API_KEY"))
     chunks = [Document(page_content="Alice is a software engineer at Acme Corp.", metadata={"filename": "bio.txt", "file_type": "txt"})]
     retriever = _make_mock_retriever(chunks)
     graph = build_graph(retriever, llm)

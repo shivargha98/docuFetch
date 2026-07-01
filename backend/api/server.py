@@ -11,6 +11,7 @@ from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from langchain_anthropic import ChatAnthropic
 
@@ -66,7 +67,7 @@ async def lifespan(app: FastAPI):
     bm25_index = BM25Index(text_chunks)
     app.state.hybrid_retriever = HybridRetriever(bm25_index, app.state.chroma_store, app.state.embedder)
 
-    llm = ChatAnthropic(model="claude-haiku-4-5", api_key=os.getenv("ANTHROPIC_API_KEY", ""))
+    llm = ChatAnthropic(model=os.getenv("ANTHROPIC_MODEL", "claude-haiku-4-5"), api_key=os.getenv("ANTHROPIC_API_KEY", ""))
     app.state.graph = build_graph(app.state.hybrid_retriever, llm)
 
     task = asyncio.create_task(_ingestion_scheduler(app))
@@ -79,6 +80,13 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="docuFetch", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(router)
 

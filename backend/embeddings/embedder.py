@@ -6,10 +6,9 @@ via the OpenRouter API (OpenAI-compatible) and returns embedding vectors.
 Image embedding (raw bytes via base64 data URI) is added in Issue 4.
 """
 import base64
+import os
 
 import openai
-
-OPENROUTER_EMBED_MODEL = "nvidia/llama-nemotron-embed-vl-1b-v2:free"
 
 _MIME_TYPES = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png"}
 
@@ -23,6 +22,7 @@ class EmbeddingClient:
             api_key=api_key,
             base_url="https://openrouter.ai/api/v1",
         )
+        self._model = os.getenv("OPENROUTER_EMBED_MODEL", "nvidia/llama-nemotron-embed-vl-1b-v2:free")
 
     def embed_texts(self, texts: list[str]) -> list[list[float]]:
         """
@@ -30,7 +30,7 @@ class EmbeddingClient:
         Raises openai.OpenAIError on API failure.
         """
         response = self._client.embeddings.create(
-            model=OPENROUTER_EMBED_MODEL,
+            model=self._model,
             input=texts,
             encoding_format="float",
         )
@@ -45,7 +45,7 @@ class EmbeddingClient:
         mime_type = _MIME_TYPES.get(suffix.lower(), "image/jpeg")
         b64 = base64.b64encode(image_bytes).decode("utf-8")
         response = self._client.embeddings.create(
-            model=OPENROUTER_EMBED_MODEL,
+            model=self._model,
             input=f"data:{mime_type};base64,{b64}",
             encoding_format="float",
         )
