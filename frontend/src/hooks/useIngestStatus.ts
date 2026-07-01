@@ -24,8 +24,8 @@ export function useIngestStatus(): UseIngestStatusReturn {
     async function poll(): Promise<void> {
       try {
         const data = await getIngestStatus();
-        setDocCount(data.files_processed);
-        setLastRunAt(data.last_run);
+        setDocCount(data.doc_count);
+        setLastRunAt(data.last_run_at);
       } catch {
         // Leave previous values unchanged on failure
       }

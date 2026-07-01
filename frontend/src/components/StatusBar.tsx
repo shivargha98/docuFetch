@@ -17,8 +17,9 @@ interface StatusBarProps {
 function StatusBar({ docCount, lastRunAt, onNewChat }: StatusBarProps): React.ReactElement {
   /** Formats lastRunAt as a locale string, or returns "Never" when null. */
   function formatLastRun(lastRun: string | null): string {
-    if (lastRun === null) return 'Never';
-    return new Date(lastRun).toLocaleString();
+    if (!lastRun) return 'Never';
+    const d = new Date(lastRun);
+    return isNaN(d.getTime()) ? 'Never' : d.toLocaleString();
   }
 
   return (

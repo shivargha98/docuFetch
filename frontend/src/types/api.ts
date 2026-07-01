@@ -18,8 +18,7 @@ export interface HealthResponse {
 }
 
 export interface IngestStatusResponse {
-  files_processed: number;
-  files_failed: number;
-  files_skipped: number;
-  last_run: string | null;
+  doc_count: number;
+  last_run_at: string | null;
+  last_error: string | null;
 }
