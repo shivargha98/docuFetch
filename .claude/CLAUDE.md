@@ -101,9 +101,15 @@ ruff format .
 Start the backend + frontend with:
 
 ```bash
-uvicorn server:app --port 8000 --reload --reload-exclude "chroma_db/*" --reload-exclude "hash_store.json"
+uvicorn server:app --port 8000 --reload --reload-dir backend
 ```
 
-**Important:** the ingestion scheduler writes to `chroma_db/` and `hash_store.json` on every run. Without the `--reload-exclude` flags above, `--reload` treats those writes as code changes and respawns the worker process — old workers can linger and hold concurrent connections to the same ChromaDB SQLite file, corrupting it (HNSW index files and the SQLite metadata table go out of sync, leading to `doc_count: 0` / "no relevant information" answers despite ingested data). If this happens again: kill all stray python processes for this project, delete `chroma_db/` and `hash_store.json`, and restart with the command above.
+**Important:** the ingestion scheduler writes to `chroma_db/` and `hash_store.json` in the project root on every run. Plain `--reload` (which watches the whole project root by default) treats those writes as code changes and respawns the worker process — old workers can linger and hold concurrent connections to the same ChromaDB SQLite file, corrupting it (HNSW index files and the SQLite metadata table go out of sync, leading to `doc_count: 0` / "no relevant information" answers despite ingested data). `--reload-dir backend` fixes this by only watching `backend/` (where the actual application code lives), so root-level data files are never treated as reload triggers.
+
+Do **not** use `--reload-exclude "chroma_db/*"` as a fix — on Windows, Click (uvicorn's CLI framework) auto-expands wildcard arguments against the real filesystem before uvicorn parses them, which crashes with `Error: Got unexpected extra argument (chroma_db\chroma.sqlite3)` regardless of shell or quoting. `--reload-dir` avoids the wildcard entirely.
+
+Editing `server.py` itself (the root-level entrypoint shim) won't trigger a reload since it's outside `backend/` — restart manually after touching that file.
+
+If corruption happens again: kill all stray python processes for this project, delete `chroma_db/` and `hash_store.json`, and restart with the command above.
 
 **Update this file as and when the structure gets modified.**
